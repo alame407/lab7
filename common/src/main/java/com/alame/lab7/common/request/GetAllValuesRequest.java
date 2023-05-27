@@ -33,4 +33,9 @@ public class GetAllValuesRequest extends AbstractRequest{
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "GetAllValuesRequest";
+    }
 }

@@ -4,8 +4,6 @@ import com.alame.lab7.common.exceptions.IncorrectCommandParameterException;
 import com.alame.lab7.common.printers.Printer;
 import com.alame.lab7.server.servers.ServerInterface;
 
-import java.io.IOException;
-
 /**
  * command for exit from application
  */

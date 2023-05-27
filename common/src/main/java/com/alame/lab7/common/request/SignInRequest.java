@@ -23,4 +23,9 @@ public class SignInRequest extends AbstractRequest{
 			return new Response<>(ResponseStatus.FAIL, null, "не удалось выполнить запрос к базе данных");
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "SignInRequest";
+	}
 }

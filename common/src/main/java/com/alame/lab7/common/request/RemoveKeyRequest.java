@@ -35,6 +35,10 @@ public class RemoveKeyRequest extends AbstractRequest{
         } catch (UserAccessException | NoSuchUserException | DatabaseUpdateException e) {
             return new Response<>(ResponseStatus.FAIL, null, e.getMessage());
         }
+    }
 
+    @Override
+    public String toString() {
+        return "RemoveKeyRequest";
     }
 }

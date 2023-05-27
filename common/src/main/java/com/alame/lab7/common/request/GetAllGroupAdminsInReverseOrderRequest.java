@@ -32,6 +32,10 @@ public class GetAllGroupAdminsInReverseOrderRequest extends AbstractRequest{
         } catch (NoSuchUserException e) {
             return new Response<>(ResponseStatus.FAIL, null, e.getMessage());
         }
+    }
 
+    @Override
+    public String toString() {
+        return "GetAllGroupAdminsInReverseOrderRequest";
     }
 }

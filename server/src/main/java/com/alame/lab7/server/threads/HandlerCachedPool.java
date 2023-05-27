@@ -8,7 +8,7 @@ public class HandlerCachedPool {
 	public HandlerCachedPool(ExecutorService handleService) {
 		this.handleService = handleService;
 	}
-	public void submit(HandleThread task){
-		handleService.submit(task);
+	public void execute(HandleThread task){
+		handleService.execute(task);
 	}
 }

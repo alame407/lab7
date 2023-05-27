@@ -2,10 +2,7 @@ package com.alame.lab7.server.database;
 
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.apache.commons.dbcp2.DriverConnectionFactory;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DatabaseConnectionManager {

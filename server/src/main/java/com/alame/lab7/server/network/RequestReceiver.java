@@ -41,7 +41,7 @@ public class RequestReceiver {
 				Request request = SerializationUtils.deserialize(
 						NetworkUtils.convertListFramesToByteArray(frames));
 				logger.info("получен Request "+request);
-				handlerCachedPool.submit(new HandleThread(request, clientAddress, requestHandler));
+				handlerCachedPool.execute(new HandleThread(request, clientAddress, requestHandler));
 			}
 		}
 	}

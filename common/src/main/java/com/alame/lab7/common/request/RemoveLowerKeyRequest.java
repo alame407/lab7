@@ -34,6 +34,10 @@ public class RemoveLowerKeyRequest extends AbstractRequest{
         } catch (NoSuchUserException | DatabaseUpdateException e) {
             return new Response<>(ResponseStatus.FAIL, null, e.getMessage());
         }
+    }
 
+    @Override
+    public String toString() {
+        return "RemoveLowerKeyRequest";
     }
 }

@@ -8,7 +8,7 @@ public class ReceiverCachedPool {
 	public ReceiverCachedPool(ExecutorService executorService) {
 		this.executorService = executorService;
 	}
-	public void submit(ReceiveThread task){
-		executorService.submit(task);
+	public void execute(ReceiveThread task){
+		executorService.execute(task);
 	}
 }

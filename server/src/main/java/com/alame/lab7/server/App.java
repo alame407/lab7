@@ -40,14 +40,12 @@ public class App {
     ServerInterface server;
     private final ReceiverCachedPool receiverCachedPool;
     private final RequestReceiver requestReceiver;
-    private final Selector selector;
     public App(Printer printer, ServerInterface server, ReceiverCachedPool receiverCachedPool,
-               RequestReceiver requestReceiver, DatabaseManager databaseManager, Selector selector) {
+               RequestReceiver requestReceiver, DatabaseManager databaseManager) {
         this.printer = printer;
         this.server =server;
         this.requestReceiver = requestReceiver;
         this.receiverCachedPool = receiverCachedPool;
-        this.selector = selector;
         try{
             server.putAll(databaseManager.load());
         } catch (SQLException e) {
@@ -68,7 +66,6 @@ public class App {
     }
     public void start(){
         logger.info("сервер запущен");
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         CommandMapper commandMapper = new CommandMapper();
 
         CommandHandler commandHandler = new CommandHandler(new Executor());
@@ -78,25 +75,22 @@ public class App {
             }
         });
         CommandReader commandReader = new ConsoleCommandReader(new CommandParser(commandMapper));
-        receiverCachedPool.submit(new ReceiveThread(requestReceiver));
+        receiverCachedPool.execute(new ReceiveThread(requestReceiver));
         while(true){
-            try{
-                if (bufferedReader.ready()){
-                    Command command = commandReader.readCommand();
-                    commandHandler.handle(command);
-                }
-            }catch (IOException | IncorrectCommandParameterException | CommandNotFoundException e){
+            try {
+                Command command = commandReader.readCommand();
+                commandHandler.handle(command);
+            }
+            catch (IncorrectCommandParameterException | CommandNotFoundException e){
                 printer.printlnString(e.getMessage());
             }
         }
     }
     public static void main(String[] args) {
         Printer printer = new ConsolePrinter();
-        try (DatagramChannel datagramChannel = DatagramChannel.open();
-            Selector selector = Selector.open()){
+        try (DatagramChannel datagramChannel = DatagramChannel.open()){
             datagramChannel.configureBlocking(false);
             datagramChannel.bind(new InetSocketAddress(port));
-            datagramChannel.register(selector, SelectionKey.OP_READ);
             String url = System.getenv("url");
             String username = System.getenv("user");
             String password = System.getenv("password");
@@ -111,7 +105,7 @@ public class App {
             RequestHandler requestHandler = new RequestHandler(server, sendCachedPool, responseSender);
             RequestReceiver requestReceiver = new RequestReceiver(datagramChannel, handlerCachedPool, requestHandler,
                     new FrameMapper(new HashMap<>()));
-            new App(printer, server, receiverCachedPool, requestReceiver, databaseManager, selector).start();
+            new App(printer, server, receiverCachedPool, requestReceiver, databaseManager).start();
         }catch (Exception e){
 
             logger.severe("Не удалось запустить сервер " + e.getMessage());

@@ -1,7 +1,6 @@
 package com.alame.lab7.common.request;
 
 import com.alame.lab7.common.data.StudyGroup;
-import com.alame.lab7.common.exceptions.CollectionFullException;
 import com.alame.lab7.common.exceptions.IncorrectElementFieldException;
 import com.alame.lab7.common.exceptions.NoSuchUserException;
 import com.alame.lab7.common.exceptions.UserAccessException;
@@ -40,4 +39,8 @@ public class InsertRequest extends AbstractRequest{
         }
     }
 
+    @Override
+    public String toString() {
+        return "InsertRequest";
+    }
 }

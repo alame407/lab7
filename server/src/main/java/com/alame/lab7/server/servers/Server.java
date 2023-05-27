@@ -6,8 +6,6 @@ import com.alame.lab7.common.user.User;
 import com.alame.lab7.server.App;
 import com.alame.lab7.server.database.DatabaseManager;
 import org.apache.commons.lang3.tuple.Pair;
-
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -133,7 +131,6 @@ public class Server implements ServerInterface {
                             formOfEducation, semester, groupAdmin)) {
                         throw new DatabaseUpdateException("не удалось обновить значение в базе данных");
                     }
-                    ;
                     studyGroup.setGroupAdmin(groupAdmin);
                     studyGroup.setName(name);
                     studyGroup.setCoordinates(coordinates);
@@ -169,7 +166,7 @@ public class Server implements ServerInterface {
                     throw new DatabaseUpdateException("не удалось обновить базу данных");
                 }
                 studyGroupMap.remove(key);
-                logger.info("элемент удаден");
+                logger.info("элемент удален");
             }
             finally {
                 lock.unlock();

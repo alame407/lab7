@@ -30,4 +30,9 @@ public class GetInfoRequest extends AbstractRequest{
             return new Response<>(ResponseStatus.FAIL, null, e.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        return "GetInfoRequest";
+    }
 }

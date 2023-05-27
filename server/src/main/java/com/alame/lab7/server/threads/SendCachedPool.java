@@ -8,7 +8,7 @@ public class SendCachedPool {
 	public SendCachedPool(ExecutorService executorService) {
 		this.executorService = executorService;
 	}
-	public void submit(SendThread sendThread){
-		executorService.submit(sendThread);
+	public void execute(SendThread sendThread){
+		executorService.execute(sendThread);
 	}
 }

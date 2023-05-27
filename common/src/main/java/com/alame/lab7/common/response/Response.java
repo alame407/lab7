@@ -35,4 +35,9 @@ public class Response<T> implements Serializable {
     public T getResponse() {
         return response;
     }
+
+    @Override
+    public String toString() {
+        return this.status.toString();
+    }
 }
