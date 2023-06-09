@@ -1,6 +1,4 @@
 package com.alame.lab7.common.request;
-
-import com.alame.lab7.common.exceptions.IdNotExistException;
 import com.alame.lab7.common.exceptions.KeyNotExistException;
 import com.alame.lab7.common.exceptions.NoSuchUserException;
 import com.alame.lab7.common.response.Response;
