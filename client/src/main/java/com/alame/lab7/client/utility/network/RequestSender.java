@@ -10,6 +10,8 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 /**
@@ -43,13 +45,23 @@ public class RequestSender {
         while(!received) {
             DatagramPacket datagramPacketReceive = new DatagramPacket(bufferResponse, bufferResponse.length);
             datagramSocket.receive(datagramPacketReceive);
-            Frame frame = SerializationUtils.deserialize(bufferResponse);
-            frames.add(frame);
-            if (frame.isLast()) {
-                received = true;
+            try {
+                Frame frame = SerializationUtils.deserialize(bufferResponse);
+                frames.add(frame);
+                if (frame.isLast()) {
+                    received = true;
+                }
+            }
+            catch (SerializationException e){
+                throw new IOException("не удалось получить ответ");
             }
         }
-        return SerializationUtils.deserialize(NetworkUtils.convertListFramesToByteArray(frames));
+        try {
+            return SerializationUtils.deserialize(NetworkUtils.convertListFramesToByteArray(frames));
+        }
+        catch (SerializationException e){
+            throw new IOException("не удалось получить ответ");
+        }
     }
     public void send(byte[] bytes, SocketAddress socketAddress) throws IOException{
         int step = 4000;

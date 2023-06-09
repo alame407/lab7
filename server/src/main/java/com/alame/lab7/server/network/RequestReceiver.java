@@ -6,6 +6,7 @@ import com.alame.lab7.common.request.Request;
 import com.alame.lab7.server.App;
 import com.alame.lab7.server.threads.HandleThread;
 import com.alame.lab7.server.threads.HandlerCachedPool;
+import org.apache.commons.lang3.SerializationException;
 import org.apache.commons.lang3.SerializationUtils;
 
 import java.io.IOException;
@@ -33,16 +34,27 @@ public class RequestReceiver {
 		byte[] bufferResponse = new byte[MAX_SERIALIZED_FRAME_SIZE];
 		SocketAddress clientAddress = datagramChannel.receive(ByteBuffer.wrap(bufferResponse));
 		if(clientAddress!=null) {
-			Frame frame = SerializationUtils.deserialize(bufferResponse);
-			frameMapper.addFrameToUser(clientAddress, frame);
-			if (frame.isLast()){
-				List<Frame> frames = frameMapper.getFramesByUser(clientAddress);
-				frameMapper.removeUser(clientAddress);
-				Request request = SerializationUtils.deserialize(
-						NetworkUtils.convertListFramesToByteArray(frames));
-				logger.info("получен Request "+request);
-				handlerCachedPool.execute(new HandleThread(request, clientAddress, requestHandler));
+			try {
+				Frame frame = SerializationUtils.deserialize(bufferResponse);
+				frameMapper.addFrameToUser(clientAddress, frame);
+				if (frame.isLast()){
+					List<Frame> frames = frameMapper.getFramesByUser(clientAddress);
+					frameMapper.removeUser(clientAddress);
+					try {
+						Request request = SerializationUtils.deserialize(
+								NetworkUtils.convertListFramesToByteArray(frames));
+						logger.info("получен Request "+request);
+						handlerCachedPool.execute(new HandleThread(request, clientAddress, requestHandler));
+					}
+					catch (SerializationException e){
+						logger.info("пришел неизвестный request");
+					}
+				}
 			}
+			catch (SerializationException e){
+				logger.info("пришел неизвестный пакет");
+			}
+
 		}
 	}
 }

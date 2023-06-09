@@ -355,6 +355,7 @@ public class Server implements ServerInterface {
     private LocalDate getCreationDate() {
         return LocalDate.now();
     }
+    @Override
     public boolean signIn(User user) throws SQLException{
         if(!databaseManager.usernameExist(user.getUsername())) return false;
         Pair<String, String> passwordAndSalty = databaseManager.getPasswordAndSalty(user.getUsername());
@@ -369,6 +370,22 @@ public class Server implements ServerInterface {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean checkAccess(User user, int id) throws SQLException, NoSuchUserException, IdNotExistException {
+        if(!signIn(user)) throw new NoSuchUserException("неверное имя пользователя или пароль");
+        if(!idExist(id)) throw new IdNotExistException("такого id нет");
+        return databaseManager.checkAccess(user.getUsername(), id);
+    }
+
+    @Override
+    public boolean checkAccess(User user, String key) throws SQLException, NoSuchUserException, KeyNotExistException {
+        if(!signIn(user)) throw new NoSuchUserException("неверное имя пользователя или пароль");
+        if(!studyGroupMap.containsKey(key)) throw new KeyNotExistException("такого ключа нет");
+        return databaseManager.checkAccess(user.getUsername(), studyGroupMap.get(key).getId());
+    }
+
+    @Override
     public void register(User user) throws UsernameAlreadyTakenException, SQLException,
             InvalidUsernameException, InvalidPasswordException {
         if(user.getUsername().length()<=3 || user.getUsername().length()>40)

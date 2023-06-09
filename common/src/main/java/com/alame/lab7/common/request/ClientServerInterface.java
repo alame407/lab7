@@ -100,4 +100,6 @@ public interface ClientServerInterface {
     void register(User user) throws UsernameAlreadyTakenException, SQLException,
             InvalidUsernameException, InvalidPasswordException;
     boolean signIn(User user) throws SQLException;
+    boolean checkAccess(User user, int id) throws SQLException, NoSuchUserException, IdNotExistException;
+    boolean checkAccess(User user, String key) throws SQLException, NoSuchUserException, KeyNotExistException;
 }

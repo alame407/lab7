@@ -1,13 +1,13 @@
 package com.alame.lab7.client.commands;
 
 import com.alame.lab7.client.input.UserInput;
+import com.alame.lab7.common.request.CheckAccessKeyRequest;
 import com.alame.lab7.common.user.User;
 import com.alame.lab7.client.utility.network.RequestSender;
 import com.alame.lab7.common.commands.Command;
 import com.alame.lab7.common.exceptions.IncorrectCommandParameterException;
 import com.alame.lab7.common.exceptions.IncorrectElementFieldException;
 import com.alame.lab7.common.printers.Printer;
-import com.alame.lab7.common.request.KeyExistRequest;
 import com.alame.lab7.common.request.ReplaceIfLowerRequest;
 import com.alame.lab7.common.response.Response;
 import com.alame.lab7.common.response.ResponseStatus;
@@ -64,9 +64,12 @@ public class ReplaceIfLowerCommand implements Command {
         if (parameters.length!=1) throw new IncorrectCommandParameterException("Данная команда принимает 1 аргумент");
         try{
             key = parameters[0];
-            Response<Boolean> response = requestSender.sendThenReceive(new KeyExistRequest(key, user));
-            if (!response.getResponse()){
-                throw new IncorrectCommandParameterException("такого ключа не существует");
+            Response<Boolean> response = requestSender.sendThenReceive(new CheckAccessKeyRequest(user, key));
+            if (response.getStatus()!=ResponseStatus.SUCCESS){
+                throw new IncorrectCommandParameterException(response.getErrors());
+            }
+            if(!response.getResponse()){
+                throw new IncorrectCommandParameterException("нет доступа к ключу " + key);
             }
         }
         catch (IOException e){

@@ -27,7 +27,6 @@ public class ClearRequest extends AbstractRequest{
             return new Response<>(ResponseStatus.SUCCESS, "Команда выполнена успешно", null);
         }
         catch (SQLException e){
-            e.printStackTrace();
             return new Response<>(ResponseStatus.FAIL, null, "не удалось выполнить запрос к базе данных");
         } catch (NoSuchUserException | DatabaseUpdateException e) {
             return new Response<>(ResponseStatus.FAIL, null, e.getMessage());

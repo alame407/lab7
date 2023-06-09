@@ -12,9 +12,11 @@ import com.alame.lab7.common.parsers.*;
 import com.alame.lab7.common.printers.ConsolePrinter;
 import com.alame.lab7.common.printers.Printer;
 import com.alame.lab7.server.database.DatabaseConnectionManager;
+import com.alame.lab7.server.database.DatabaseConnectionManagerImpl;
 import com.alame.lab7.server.database.DatabaseManager;
 import com.alame.lab7.server.commands.CommandHandler;
 import com.alame.lab7.server.commands.ExitCommand;
+import com.alame.lab7.server.database.DatabaseManagerImpl;
 import com.alame.lab7.server.network.FrameMapper;
 import com.alame.lab7.server.network.RequestHandler;
 import com.alame.lab7.server.input.readers.commads.CommandReader;
@@ -94,8 +96,16 @@ public class App {
             String url = System.getenv("url");
             String username = System.getenv("user");
             String password = System.getenv("password");
-            DatabaseConnectionManager databaseConnectionManager = new DatabaseConnectionManager(url, username, password);
-            DatabaseManager databaseManager = new DatabaseManager(databaseConnectionManager);
+            DatabaseConnectionManager databaseConnectionManager = new DatabaseConnectionManagerImpl(url, username, password);
+            DatabaseManager databaseManager = new DatabaseManagerImpl(databaseConnectionManager);
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    databaseConnectionManager.close();
+                }
+                catch (SQLException e){
+                    logger.warning(e.getMessage());
+                }
+            }));
             ServerInterface server = new Server(new StudyGroupValidator(new PersonValidator(), new CoordinatesValidator()),
                     databaseManager);
             SendCachedPool sendCachedPool = new SendCachedPool(Executors.newCachedThreadPool());
@@ -107,7 +117,6 @@ public class App {
                     new FrameMapper(new HashMap<>()));
             new App(printer, server, receiverCachedPool, requestReceiver, databaseManager).start();
         }catch (Exception e){
-
             logger.severe("Не удалось запустить сервер " + e.getMessage());
             System.exit(0);
         }

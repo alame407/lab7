@@ -1,6 +1,7 @@
 package com.alame.lab7.client.commands;
 
 import com.alame.lab7.client.input.UserInput;
+import com.alame.lab7.common.request.KeyExistRequest;
 import com.alame.lab7.common.user.User;
 import com.alame.lab7.client.utility.network.RequestSender;
 import com.alame.lab7.common.commands.Command;
@@ -60,8 +61,16 @@ public class InsertCommand implements Command {
     @Override
     public void setParameters(String[] parameters) throws IncorrectCommandParameterException {
         if (parameters.length!=1) throw new IncorrectCommandParameterException("Данная команда принимает 1 аргумент");
-        else{
-            key = parameters[0];
+        key = parameters[0];
+        try {
+            Response<Boolean> response = requestSender.sendThenReceive(new KeyExistRequest(key, user));
+            if (response.getStatus()!=ResponseStatus.SUCCESS)
+                throw new IncorrectCommandParameterException("не удалось выполнить запрос");
+            if (response.getResponse())
+                throw new IncorrectCommandParameterException("такой ключ уже существует");
+        }
+        catch (IOException e){
+            throw new IncorrectCommandParameterException(e.getMessage());
         }
     }
 
